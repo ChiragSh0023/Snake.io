@@ -2,15 +2,18 @@ import pygame
 import sys
 import colors
 import os
+import random
 
 # To center the window
 os.environ['SDL_VIDEO_CENTERED'] = '1' # Creates an enviornment variable and tells SDL to center the window
 
 # Initialise Pygame
 pygame.init()
+screen_width = 800
+screen_height = 600
 
 # Creating a window for game
-gameWindow = pygame.display.set_mode((800, 600))
+gameWindow = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Snake.io")
 pygame.display.update()
 
@@ -19,10 +22,13 @@ game_exit = False
 game_over = False
 snake_x = 45 # position of snake on x-axis
 snake_y = 55 # position of snake on y-axis
-snake_size = 10 # 20 * 20 size
+snake_size = 10 # 10 * 10 size
 fps = 30
 velocity_x = 0
 velocity_y = 0
+food_x = random.randint(0, screen_width/2)
+food_y = random.randint(0, screen_height/2)
+food_size = 10
 
 clock = pygame.time.Clock()
 
@@ -53,8 +59,10 @@ while not game_exit:
     snake_y += velocity_y
 
     gameWindow.fill(colors.WHITE)
-
+    # Creating snake
     pygame.draw.rect(gameWindow, colors.BLACK, [snake_x, snake_y, snake_size, snake_size])
+    #Creating food
+    pygame.draw.rect(gameWindow, colors.RED, [food_x, food_y, 10, 10])
 
     # if we don't use clock.tick, the game runs as fast as your CPU can handle — say, 3000 frames per second, which makes the snake very fast
     clock.tick(fps)
