@@ -26,8 +26,8 @@ snake_size = 10 # 10 * 10 size
 fps = 30
 velocity_x = 0
 velocity_y = 0
-food_x = random.randint(0, screen_width/2)
-food_y = random.randint(0, screen_height/2)
+food_x = random.randint(0, int(screen_width/2))
+food_y = random.randint(0, int(screen_height/2))
 food_size = 10
 
 clock = pygame.time.Clock()
