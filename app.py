@@ -87,6 +87,7 @@ while not game_exit:
     # Creating snake
     snk_list.append([snake_x, snake_y])
 
+    # if len(snk_list) > snk_length , eg, if the snake moves forward without eating food, its length should not change. But, the new positions will be appended to snk_list. So, we have to cut the previous length
     if (len(snk_list) > snk_length):
         del snk_list[0]
 
