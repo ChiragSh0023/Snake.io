@@ -22,8 +22,7 @@ game_exit = False
 game_over = False
 snake_x = 45 # position of snake on x-axis
 snake_y = 55 # position of snake on y-axis
-snake_length = 20 # 10 * 10 size
-snake_width = 10 # 10 * 10 size
+snake_size = 10 # 10 * 10 snake
 fps = 60
 velocity_x = 0
 velocity_y = 0
@@ -31,6 +30,8 @@ food_x = random.randint(0, int(screen_width/2)) # position of food on x-axis
 food_y = random.randint(0, int(screen_height/2)) # position of food on y-axis
 food_size = 10
 score = 0
+snk_list = []
+snk_length = 1
 
 clock = pygame.time.Clock()
 font = pygame.font.SysFont(None, 30)
@@ -38,6 +39,10 @@ font = pygame.font.SysFont(None, 30)
 def score_screen(text, color, x, y):
     screen_text = font.render(text, True, color)
     gameWindow.blit(screen_text, [x, y])
+
+def plot_snake(gameWindow, color, snk_list, snake_size):
+    for x, y in snk_list:
+        pygame.draw.rect(gameWindow, color, [x, y, snake_size, snake_size])
 
 # Game Loop
 while not game_exit:
@@ -67,6 +72,7 @@ while not game_exit:
 
     # Logic if snake catches the food
     if (abs(snake_x - food_x) < 10 and abs(snake_y - food_y) < 10):
+        snk_length += 3
         score += 10
         food_x = random.randint(0, int(screen_width))
         food_y = random.randint(0, int(screen_height))
@@ -74,10 +80,17 @@ while not game_exit:
 
     gameWindow.fill(colors.WHITE)
     score_screen(f"Score: {score}", colors.RED, 10, 10)
-    # Creating snake
-    pygame.draw.rect(gameWindow, colors.BLACK, [snake_x, snake_y, snake_width, snake_length])
+    
     #Creating food
     pygame.draw.rect(gameWindow, colors.RED, [food_x, food_y, 10, 10])
+
+    # Creating snake
+    snk_list.append([snake_x, snake_y])
+
+    if (len(snk_list) > snk_length):
+        del snk_list[0]
+
+    plot_snake(gameWindow, colors.BLACK, snk_list, snake_size)
 
     # if we don't use clock.tick, the game runs as fast as your CPU can handle — say, 3000 frames per second, which makes the snake very fast
     clock.tick(fps)
