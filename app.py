@@ -23,12 +23,13 @@ game_over = False
 snake_x = 45 # position of snake on x-axis
 snake_y = 55 # position of snake on y-axis
 snake_size = 10 # 10 * 10 size
-fps = 30
+fps = 60
 velocity_x = 0
 velocity_y = 0
-food_x = random.randint(0, int(screen_width/2))
-food_y = random.randint(0, int(screen_height/2))
+food_x = random.randint(0, int(screen_width/2)) # position of food on x-axis
+food_y = random.randint(0, int(screen_height/2)) # position of food on y-axis
 food_size = 10
+score = 0
 
 clock = pygame.time.Clock()
 
@@ -43,20 +44,28 @@ while not game_exit:
                 velocity_x = 5
                 velocity_y = 0
             
-            if (event.key == pygame.K_LEFT):
+            elif (event.key == pygame.K_LEFT):
                 velocity_x = -5
                 velocity_y = 0
             
-            if (event.key == pygame.K_UP):
+            elif (event.key == pygame.K_UP):
                 velocity_x = 0
                 velocity_y = -5
             
-            if (event.key == pygame.K_DOWN):
+            elif (event.key == pygame.K_DOWN):
                 velocity_x = 0
                 velocity_y = 5
     
     snake_x += velocity_x
     snake_y += velocity_y
+
+    # Logic if snake catches the food
+    if (abs(snake_x - food_x) < 10 and abs(snake_y - food_y) < 10):
+        score += 10
+        print(f"Score: {score}")
+        food_x = random.randint(0, int(screen_width))
+        food_y = random.randint(0, int(screen_height))
+
 
     gameWindow.fill(colors.WHITE)
     # Creating snake
