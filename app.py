@@ -60,10 +60,20 @@ def gameLoop():
     score = 0
     snk_list = []
     snk_length = 1
+
+    # Reading high score
+    with open("highscore.txt", "r") as f:
+        highscore = int(f.readline())
+    
     while not game_exit:
         if (game_over):
             gameWindow.fill(colors.WHITE)
-            score_screen("Game Over! Press any key to continue", colors.RED, center=True)
+            text = "Game Over! Press any key to continue."
+            if (score >= highscore):
+                text = "You have a new highscore!!! Press any key to continue."
+                with open("highscore.txt", "w") as f:
+                    f.write(str(highscore))
+            score_screen(text, colors.RED, center=True)
             pygame.display.update()
 
             waiting = True
@@ -103,14 +113,16 @@ def gameLoop():
 
             # Logic if snake catches the food
             if (abs(snake_x - food_x) < 20 and abs(snake_y - food_y) < 20):
-                snk_length += 3
+                snk_length += 5
                 score += 10
+                if (score > highscore):
+                    highscore = score
                 food_x = random.randint(0, int(screen_width))
                 food_y = random.randint(0, int(screen_height))
 
 
             gameWindow.fill(colors.WHITE)
-            score_screen(f"Score: {score}", colors.RED, 10, 10)
+            score_screen(f"Score: {score} Highscore: {highscore}", colors.RED, 10, 10)
             
             #Creating food
             pygame.draw.rect(gameWindow, colors.RED, [food_x, food_y, food_size, food_size])
