@@ -37,6 +37,10 @@ def plot_snake(gameWindow, color, snk_list, snake_size):
     for x, y in snk_list:
         pygame.draw.rect(gameWindow, color, [x, y, snake_size, snake_size])
 
+def snakeTouchItself(snake_x, snake_y, snk_list):
+    # Excluding the last element, because we just pushed the head into the snk_list
+    return [snake_x, snake_y] in snk_list[:-1]
+
 # Game Loop
 def gameLoop():
     clock = pygame.time.Clock()
@@ -97,9 +101,6 @@ def gameLoop():
             snake_x += velocity_x
             snake_y += velocity_y
 
-            if (snake_x < 0 or snake_x > screen_width or snake_y < 0 or snake_y > screen_height):
-                game_over = True
-
             # Logic if snake catches the food
             if (abs(snake_x - food_x) < 20 and abs(snake_y - food_y) < 20):
                 snk_length += 3
@@ -120,6 +121,14 @@ def gameLoop():
             # if len(snk_list) > snk_length , eg, if the snake moves forward without eating food, its length should not change. But, the new positions will be appended to snk_list. So, we have to cut the previous length
             if (len(snk_list) > snk_length):
                 del snk_list[0]
+            
+            # If snake goes beyond the wall
+            if (snake_x < 0 or snake_x > screen_width or snake_y < 0 or snake_y > screen_height):
+                game_over = True
+            
+            # If snake touches itself
+            if snakeTouchItself(snake_x, snake_y, snk_list):
+                game_over = True
 
             plot_snake(gameWindow, colors.BLACK, snk_list, snake_size)
 
