@@ -17,7 +17,7 @@ gameWindow = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Snake.io")
 pygame.display.update()
 
-font = pygame.font.SysFont(None, 40)
+font = pygame.font.SysFont(None, 30)
 def score_screen(text, color, x = None, y = None, center = False):
     # Renders the text as a surface
     screen_text = font.render(text, True, color)
@@ -60,6 +60,11 @@ def gameLoop():
     score = 0
     snk_list = []
     snk_length = 1
+    cheat_code = ""
+    cheat_trigger = "hesoyam"
+    cheat_activated = False
+    cheat_timer = 0
+    last_cheat_key_time = 0
 
     # Reading high score
     with open("highscore.txt", "r") as f:
@@ -92,6 +97,24 @@ def gameLoop():
                     game_exit = True
                 
                 if (event.type == pygame.KEYDOWN):
+                    key_char = pygame.key.name(event.key).lower()
+                    if (key_char.isalpha()):
+                        current_time = pygame.time.get_ticks()
+                        
+                        if current_time - last_cheat_key_time > 2000:
+                            cheat_code = ''
+                        
+                        cheat_code += key_char
+                        cheat_code = cheat_code[-len(cheat_trigger):]  # Keeps only the last 7 characters in the string
+                        last_cheat_key_time = current_time
+
+                        if (cheat_code == cheat_trigger):
+                            cheat_activated = True
+                            cheat_timer = pygame.time.get_ticks()   # Stores the current time
+                            score += 100
+                            if (score > highscore):
+                                highscore = score
+
                     if (event.key == pygame.K_RIGHT):
                         velocity_x = 5
                         velocity_y = 0
@@ -117,8 +140,8 @@ def gameLoop():
                 score += 10
                 if (score > highscore):
                     highscore = score
-                food_x = random.randint(0, int(screen_width))
-                food_y = random.randint(0, int(screen_height))
+                food_x = random.randint(0, int(screen_width - 20))
+                food_y = random.randint(0, int(screen_height - 20))
 
 
             gameWindow.fill(colors.WHITE)
@@ -143,6 +166,14 @@ def gameLoop():
                 game_over = True
 
             plot_snake(gameWindow, colors.BLACK, snk_list, snake_size)
+
+            # Displaying cheat code activated for 2 seconds
+            if (cheat_activated):
+                if (pygame.time.get_ticks() - cheat_timer > 2000):
+                    cheat_activated = False
+                else:
+                    score_screen("Cheat Code Activated!", colors.GREEN, screen_width - 230, 10)
+
 
         # if we don't use clock.tick, the game runs as fast as your CPU can handle — say, 3000 frames per second, which makes the snake very fast
         clock.tick(fps)
